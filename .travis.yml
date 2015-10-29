@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+
+sudo: false
+
+install:
+  - pip install -e '.[test]'
+
+script:
+  - flake8 --max-line-length=99 docio
+  - py.test -nauto --cov-config .coveragerc --cov-report html --cov-report term-missing --cov docio
