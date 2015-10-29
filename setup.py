@@ -36,9 +36,9 @@ setuptools.setup(
     install_requires=install_requires,
     extras_require={
         'test': [
-            'pytest',
-            'pytest-cov',
-            'flake8',
+            'pytest>=2.8.2',
+            'pytest-cov>=2.2.0',
+            'flake8>=2.5.0',
         ],
     }
 )
