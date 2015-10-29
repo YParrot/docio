@@ -1,7 +1,9 @@
 import setuptools
 
 
-install_requires = []
+install_requires = [
+    'mypy-lang>=0.2.0',
+]
 
 
 def readme() -> str:
