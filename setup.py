@@ -37,6 +37,7 @@ setuptools.setup(
     extras_require={
         'test': [
             'pytest>=2.8.2',
+            'pytest-xdist>=1.13.1',
             'pytest-cov>=2.2.0',
             'flake8>=2.5.0',
         ],
