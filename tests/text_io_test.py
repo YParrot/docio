@@ -11,11 +11,11 @@ def test_extract():
     assert text_io.extract() == ["This is a test text."]
 
 
-def test_substitute():
+def test_swap():
     with tempfile.NamedTemporaryFile(delete=False) as f:
         dest_file_path = f.name
     text_io = docio.TextIO(test_file_path)
-    text_io.substitute(["New text."])
+    text_io.swap(["New text."])
     text_io.save(dest_file_path)
 
     with open(dest_file_path) as f:
