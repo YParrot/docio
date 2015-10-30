@@ -36,7 +36,7 @@ setuptools.setup(
     license='GPLv3',
     author='Motoki Naruse',
     author_email='motoki@naru.se',
-    url='https://github.com/narusemotoki/docio',
+    url='https://github.com/YParrot/docio',
     keywords='text extract',
     zip_safe=False,
     install_requires=install_requires,
