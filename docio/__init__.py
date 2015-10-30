@@ -15,7 +15,7 @@ class IOBase(metaclass=abc.ABCMeta):
     def extract(self) -> typing.List[str]:
         raise NotImplementedError
 
-    def substitute(self, texts: typing.List[str]) -> None:
+    def swap(self, texts: typing.List[str]) -> None:
         raise NotImplementedError
 
     def save(self, dest_file_path: str=None) -> None:
@@ -41,7 +41,7 @@ class TextIO(IOBase):
     def extract(self) -> typing.List[str]:
         return [self.text]
 
-    def substitute(self, texts: typing.List[str]) -> None:
+    def swap(self, texts: typing.List[str]) -> None:
         self.text = texts[0]
 
     def save(self, dest_file_path: str=None) -> None:
@@ -68,7 +68,7 @@ class OfficeOpenXMLSpreadsheetIO(IOBase):
     def extract(self) -> typing.List[str]:
         return self.etree.xpath('//ns:t/text()', namespaces=self.namespaces)
 
-    def substitute(self, texts: typing.List[str]) -> None:
+    def swap(self, texts: typing.List[str]) -> None:
         for t, new_text in zip(self.etree.xpath('//ns:t', namespaces=self.namespaces), texts):
             if new_text is not None:
                 t.text = new_text

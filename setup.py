@@ -16,7 +16,7 @@ setuptools.setup(
     name='docio',
     version='0.0.1',
     packages=setuptools.find_packages(),
-    description="Extract / Replace text from several file formats.",
+    description="Extract / Swap text from several file formats.",
     long_descriptiondescription=readme(),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -37,7 +37,7 @@ setuptools.setup(
     author='Motoki Naruse',
     author_email='motoki@naru.se',
     url='https://github.com/yparrot/docio',
-    keywords='text extract replace',
+    keywords='text extract swap document doc',
     zip_safe=False,
     install_requires=install_requires,
     extras_require={

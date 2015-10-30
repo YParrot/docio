@@ -4,7 +4,7 @@ docio
 .. image:: https://travis-ci.org/yparrot/docio.svg?branch=master
     :target: https://travis-ci.org/yparrot/docio
 
-Extract / Replace text from several file formats.
+Extract / Swap text from several file formats.
 
 Goal
 ----
