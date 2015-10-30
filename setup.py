@@ -16,10 +16,9 @@ setuptools.setup(
     name='docio',
     version='0.0.1',
     packages=setuptools.find_packages(),
-    description="Input/Output txt and xlsx file",
+    description="Extract / Replace text from several file formats.",
     long_descriptiondescription=readme(),
     classifiers=[
-        'Topic :: Utilities',
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
@@ -32,12 +31,13 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython'
         'Topic :: Text Processing',
+        'Topic :: Utilities',
     ],
     license='GPLv3',
     author='Motoki Naruse',
     author_email='motoki@naru.se',
     url='https://github.com/yparrot/docio',
-    keywords='text extract',
+    keywords='text extract replace',
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
