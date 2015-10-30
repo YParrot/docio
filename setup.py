@@ -2,6 +2,7 @@ import setuptools
 
 
 install_requires = [
+    'lxml>=3.4.4',
     'mypy-lang>=0.2.0',
 ]
 
@@ -15,7 +16,7 @@ setuptools.setup(
     name='docio',
     version='0.0.1',
     packages=setuptools.find_packages(),
-    description="Input/Output text",
+    description="Input/Output txt and xlsx file",
     long_descriptiondescription=readme(),
     classifiers=[
         'Topic :: Utilities',

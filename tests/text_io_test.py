@@ -3,7 +3,7 @@ import tempfile
 
 import docio
 
-test_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources', 'text')
+test_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources', 'text.txt')
 
 
 def test_extract():
