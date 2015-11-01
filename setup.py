@@ -14,7 +14,7 @@ def readme() -> str:
 
 setuptools.setup(
     name='docio',
-    version='0.0.1',
+    version='0.1.0',
     packages=setuptools.find_packages(),
     description="Extract / Swap text from several file formats.",
     long_descriptiondescription=readme(),
