@@ -1,11 +1,17 @@
 import abc
 import os
+import re
 import shutil
+import tempfile
 import zipfile
 
 from typing import List, Optional
 
 import lxml.etree
+
+
+def _etree_to_xml(etree: lxml.etree._ElementTree) -> bytes:
+    return lxml.etree.tostring(etree, xml_declaration=True, encoding='UTF-8')
 
 
 class IOBase(metaclass=abc.ABCMeta):
@@ -79,16 +85,102 @@ class OfficeOpenXMLSpreadsheetIO(IOBase):
                 t.text = new_text
 
     def save(self, dest_file_path: str=None) -> None:
+        with tempfile.NamedTemporaryFile(delete=False) as f:
+            tmp_file_path = f.name
+
+        # Copy zip items because cannot over write zip item.
+        with zipfile.ZipFile(self.original_path, 'r') as old_zip:
+            with zipfile.ZipFile(tmp_file_path, 'w') as new_zip:
+                for info in old_zip.infolist():
+                    if info.filename == self.shared_strings_path:
+                        continue
+                    new_zip.writestr(info, old_zip.read(info.filename))
+
+                new_zip.writestr(self.shared_strings_path, _etree_to_xml(self.etree))
+
         if dest_file_path is None:
             actual_dest_file_path = self.original_path
         else:
             self._make_parent_directory(dest_file_path)
             shutil.copyfile(self.original_path, dest_file_path)
             actual_dest_file_path = dest_file_path
+        os.rename(tmp_file_path, actual_dest_file_path)
 
-        shared_strings = lxml.etree.tostring(self.etree, xml_declaration=True, encoding='UTF-8')
-        with zipfile.ZipFile(actual_dest_file_path, 'a') as zip_file:
-            zip_file.writestr(self.shared_strings_path, shared_strings)
+
+class OfficeOpenXMLPresentationIO(IOBase):
+    """As know as Power Point.
+    """
+    namespaces = {
+        'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'
+    }
+
+    def __init__(self, file_path: str, *args, **kwargs) -> None:
+        super().__init__(file_path)
+        # Read strings file from the orifinal file. OfficeOpenXML file is compressed as zip.
+        with zipfile.ZipFile(file_path, 'r') as zip_file:
+            # sorted by slide number
+            self.slides = [
+                name for number, name in sorted(
+                    [
+                        # Because slide10 is behind slide2.
+                        (int(re.search('\d+', name).group()), name)
+                        for name in zip_file.namelist() if name.startswith('ppt/slides/slide')
+                    ]
+                )
+            ]
+            self.etrees = []
+            for slide in self.slides:
+                with zip_file.open(slide) as zip_element:
+                    xml = zip_element.read()  # type: bytes
+                self.etrees.append(lxml.etree.fromstring(xml))
+
+    def extract(self) -> List[str]:
+        texts = []
+        for etree in self.etrees:
+            texts.extend([
+                t.text for t in etree.xpath(
+                    '//a:t', namespaces=self.namespaces) if t.text.strip() != ''
+            ])
+        return texts
+
+    def swap(self, texts: List[str]) -> None:
+        def swap(etree, texts: List[str]) -> List[str]:
+            for t in etree.xpath('//a:t', namespaces=self.namespaces):
+                if t.text.strip() == '':
+                    continue
+                text = texts.pop()
+                if text is None:
+                    continue
+                t.text = text
+            return texts
+
+        # pop is the fastest when access last element of list.
+        reversed_texts = list(reversed(texts))
+        for etree in self.etrees:
+            reversed_texts = swap(etree, reversed_texts)
+
+    def save(self, dest_file_path: str=None) -> None:
+        with tempfile.NamedTemporaryFile(delete=False) as f:
+            tmp_file_path = f.name
+
+        # Copy zip items because cannot over write zip item.
+        with zipfile.ZipFile(self.original_path, 'r') as old_zip:
+            with zipfile.ZipFile(tmp_file_path, 'w') as new_zip:
+                for info in old_zip.infolist():
+                    if info.filename in (self.slides):
+                        continue
+                    new_zip.writestr(info, old_zip.read(info.filename))
+
+                for name, etree in zip(self.slides, self.etrees):
+                    new_zip.writestr(name, _etree_to_xml(etree))
+
+        if dest_file_path is None:
+            actual_dest_file_path = self.original_path
+        else:
+            self._make_parent_directory(dest_file_path)
+            shutil.copyfile(self.original_path, dest_file_path)
+            actual_dest_file_path = dest_file_path
+        os.rename(tmp_file_path, actual_dest_file_path)
 
 
 class XMLIO(IOBase):
@@ -135,6 +227,6 @@ class XMLIO(IOBase):
             self._make_parent_directory(dest_file_path)
             actual_dest_file_path = dest_file_path
 
-        dest_xml = lxml.etree.tostring(self.etree, xml_declaration=True, encoding='UTF-8')
+        dest_xml = _etree_to_xml(self.etree)
         with open(actual_dest_file_path, 'wb') as f:
             f.write(dest_xml)
