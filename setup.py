@@ -14,10 +14,10 @@ def readme() -> str:
 
 setuptools.setup(
     name='docio',
-    version='0.2.0',
+    version='0.2.1',
     packages=setuptools.find_packages(),
     description="Extract / Swap text from several file formats.",
-    long_descriptiondescription=readme(),
+    long_description=readme(),
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
